@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import MapView, {Marker} from 'react-native-maps';
 
 export default function App() {
-  const [markers, setMarkers] = useState([])
+  const [markers, setMarkers]= useState([])
   const [region, setRegion] = useState({
     latitude:55,
     longitude:12,
@@ -12,23 +12,18 @@ export default function App() {
     longitudeDelta:20
   })
 
-function addMarker(data){
-  const {latitude, longitude} = data.nativeEvent.coordinate
-  markers.push(
-    <Marker 
-        coordinate={{latitude, longitude}}
-        key={data.timeStamp}
-        onPress={onPressMarker}
-    />
-  )
-  setRegion({
-    ...region,
-    latitude: region.latitude
-  })
-}
+  function addMarker(data){
+      const {latitude, longitude} = data.nativeEvent.coordinate
+      const newMarker = {
+        coordinate: {latitude, longitude},
+        key: data.timeStamp,
+        title:"Great place"
+      }
+      setMarkers([...markers, newMarker])
+  }
 
-function onPressMarker(data){
-  alert("you pressed " + data.timeStamp)
+function onMarkerPressed(text){
+  alert("you pressed " + text)
 }
 
 
@@ -39,7 +34,16 @@ function onPressMarker(data){
         region={region}
         onLongPress={addMarker}
       >
-        {markers}
+        {markers.map(marker =>(
+          <Marker
+              coordinate={marker.coordinate}
+              key={marker.key}
+              title={marker.title}
+              onPress={() => onMarkerPressed(marker.title)}
+          />
+        ))
+
+        }
       </MapView>
     </View>
   );
